@@ -6,7 +6,7 @@ public class Servicios {
 	protected double ope2;
 	protected double res;
 	protected String signo;
-	//protected int id=0;
+	protected int est=0;
 	
 	public Servicios(double op1,double op2,String sgno,double result){
 		ope1=op1;
@@ -15,7 +15,13 @@ public class Servicios {
 		res=result;
 	}
 	
+	switch(est){
+	
+	
 	}
+	
+	
+}
 	
 	
 

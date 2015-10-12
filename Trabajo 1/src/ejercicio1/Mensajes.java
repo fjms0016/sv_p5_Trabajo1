@@ -98,7 +98,7 @@ public class Mensajes {
 			codigoRecibido=campos[0];
 			secuenciaRecibida=Integer.parseInt(campos[1]);
 			fecha=Long.parseLong(campos[4]);
-			//data=new Servicios(Double.parseDouble(campos[5]),Double.parseDouble(campos[6]),Double.parseDouble(campos[7]));
+			data=new Servicios(Double.parseDouble(campos[5]),Double.parseDouble(campos[6]),campos[7], Double.parseDouble(campos[8]));
 		}
 	}
 

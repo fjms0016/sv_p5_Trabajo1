@@ -13,29 +13,16 @@ public class Datos {
 	protected long fecha;
 	private String mensaje = "";
 	private Servicios data = null;
+	private double op1,op2,res;
+	private String sgn;
 	
-	public Datos(String datos, byte[] bytedata){
-		ByteArrayInputStream bais = new ByteArrayInputStream(bytedata);
-
-		DataInputStream dis = new DataInputStream(bais);
-		try {
-			this.secuenciaRecibida = dis.readInt();
-			this.fecha = dis.readLong();
-			this.mensaje=dis.readUTF();
-		} catch (IOException ex) {
-		}
-
+	public void datosrec(Servicios data){
+		op1=data.ope1;
+		op2=data.ope2;
+		sgn=data.signo;
+		res=data.res;
+		//en servicios necesito los datos hay que mandarlos
 		
-		
-		
-		String [] campos=datos.split(" ");
-		
-		if (campos.length==9){
-			codigoRecibido=campos[0];
-			secuenciaRecibida=Integer.parseInt(campos[1]);
-			fecha=Long.parseLong(campos[4]);
-			data=new Servicios(Double.parseDouble(campos[5]),Double.parseDouble(campos[6]),campos[7], Double.parseDouble(campos[8]));
-		}
 	}
 
 }
