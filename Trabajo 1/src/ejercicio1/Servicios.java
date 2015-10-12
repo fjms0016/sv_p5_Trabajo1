@@ -2,16 +2,22 @@ package ejercicio1;
 
 public class Servicios {
 	
-	String inputData = null;
-	String outputData = "";
-	int estado = Mensajes.ID;
-}
+	protected double ope1;
+	protected double ope2;
+	protected double res;
+	protected String signo;
+	//protected int id=0;
+	
+	public Servicios(double op1,double op2,String sgno,double result){
+		ope1=op1;
+		ope2=op2;
+		signo=sgno;
+		res=result;
+	}
+	
+	}
+	
+	
 
-
-//Para contestar al cliente cuando introduce id OK o ERR crlf
-
-//Para contestar cuando solicita una aplicacion OK "" ID crlf
-
-//Para mandar la solucion a una cuenta OK""ID""numsec""datos crlf
-
-//Para salir OK""QUIT""Has salido.""CRLF
+	
+	
