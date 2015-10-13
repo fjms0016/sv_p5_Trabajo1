@@ -11,17 +11,34 @@ public class Datos {
 	protected int longitud;
 	protected int secuenciaRecibida = 0;
 	protected long fecha;
-	private String mensaje = "";
-	private Servicios data = null;
-	private double op1,op2,res;
-	private String sgn;
+	protected String mensaje = "";
+	protected Servicios data = null;
+	protected double ope1,ope2,res;
+	protected String signo,usuario,contraseña;
 	
-	public void datosrec(Servicios data){
-		op1=data.ope1;
-		op2=data.ope2;
-		sgn=data.signo;
-		res=data.res;
-		//en servicios necesito los datos hay que mandarlos
+	public Datos(double op1,double op2){
+		ope1=op1;
+		ope2=op2;
+		
+	}
+	
+	public Datos(double op1,double op2,String sgn,double res){
+		ope1=op1;
+		ope2=op2;
+		signo=sgn;
+		res=res;
+		
+	}
+	
+	public Datos(DataInputStream dis){
+		try {
+			this.usuario=dis.readUTF();
+			this.contraseña=dis.readUTF();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 	}
 

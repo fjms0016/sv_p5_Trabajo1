@@ -25,16 +25,18 @@ public class Mensajes {
 	protected int secuenciaRecibida = 0;
 	protected long fecha;
 	private String mensaje = "";
-	private Servicios data = null;
+	private Datos data = null;
+	Servicios s=new Servicios();
 	
 	
-	public  Mensajes(Servicios s,int e){
+	public   Mensajes(Datos d){
 		Date f=new Date();
 		fecha=f.getTime();
 		
-		int estado=e;
+		int estado=s.est;
 		//Forma cadena de texto
 		if(estado==1){
+			//Caso de recibir usuario correcto
 		mensaje=OK+" "+secuencia+" date= "+fecha+" "+"selecciona servicio";
 		longitud=mensaje.length();
 		mensaje=mensaje+" "+longitud;
@@ -46,7 +48,7 @@ public class Mensajes {
 		}
 		
 		else if(estado==3){
-			mensaje=OK+" "+secuencia+" date= "+fecha+" "+"el resultado es"+""+s.toString();
+			mensaje=OK+" "+secuencia+" date= "+fecha+" "+"el resultado es"+""+d.toString();
 			longitud=mensaje.length();
 			mensaje=mensaje+" "+longitud;
 		}
@@ -98,7 +100,7 @@ public class Mensajes {
 			codigoRecibido=campos[0];
 			secuenciaRecibida=Integer.parseInt(campos[1]);
 			fecha=Long.parseLong(campos[4]);
-			data=new Servicios(Double.parseDouble(campos[5]),Double.parseDouble(campos[6]),campos[7], Double.parseDouble(campos[8]));
+			//data=new Servicios(Double.parseDouble(campos[5]),Double.parseDouble(campos[6]),campos[7], Double.parseDouble(campos[8]));
 		}
 	}
 

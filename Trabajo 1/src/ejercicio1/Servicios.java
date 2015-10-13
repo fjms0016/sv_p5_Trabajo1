@@ -2,25 +2,45 @@ package ejercicio1;
 
 public class Servicios {
 	
-	protected double ope1;
-	protected double ope2;
-	protected double res;
-	protected String signo;
-	protected int est=0;
 	
-	public Servicios(double op1,double op2,String sgno,double result){
-		ope1=op1;
-		ope2=op2;
-		signo=sgno;
-		res=result;
+	
+	protected int est=1;
+	Mensajes m=new Mensajes(null);
+	Datos d=new Datos(null, null);
+	
+	
+	public void transition(){
+		switch(est){
+		case 1:
+			//Si recibo menos de 6 caracteres mando ERR si no OK
+			m.setMensaje(null);
+			//Si mando OK aumento estado
+			est++;
+			;
+		case 2:
+			//Recibo una seleccion correcta de servicio
+			m.setMensaje(null);
+			;
+		case 3:	
+			//Mando resultado
+			m.setMensaje(null);
+			;
+			
+		case 4:
+			//Estado de salida
+			
+		}
 	}
 	
-	switch(est){
 	
 	
-	}
+		
 	
 	
+	
+	
+	
+
 }
 	
 	
