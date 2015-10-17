@@ -1,115 +1,177 @@
 package ejercicio1;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Date;
 
 public class Mensajes {
 	
 	//public static final String CRLF="\r\n";
 	public static final String OK="+OK";
-	protected static String ID="";
-	//public static final String QUIT="QUIT";
 	public static final String ERR="-ERR";
-	/*public static final String SOL="SOL";
-	public static final String PET="PET";
-	
-	static int OPERACION=1;
-	static int EXIT=2;*/
-	protected String codigoRecibido="";
-	protected static int secuencia=0;
-	protected int longitud;
-	protected int secuenciaRecibida = 0;
+	public static final String QUIT="QUIT";
+	//public static final String PET="PET";
+	protected static String ID="";
+	//static int OPERACION=1;
+	//static int QUIT=2;
+	protected int longitud,estado=0;
 	protected long fecha;
+	private boolean salida=false;
 	private String mensaje = "";
-	private Datos data = null;
-	Servicios s=new Servicios();
+
 	
-	
-	public   Mensajes(Datos d){
-		Date f=new Date();
-		fecha=f.getTime();
+	/**
+	 * @param d Datos que recibe el constructor por defecto
+	 */
+	public Mensajes(Datos d){
+
+		//Servicios s = new Servicios(String.valueOf(d.getOp1()),String.valueOf(d.getOp2()));
 		
-		int estado=s.est;
-		//Forma cadena de texto
-		if(estado==1){
-			//Caso de recibir usuario correcto
-		mensaje=OK+" "+secuencia+" date= "+fecha+" "+"selecciona servicio";
-		longitud=mensaje.length();
-		mensaje=mensaje+" "+longitud;
-		}
-		else if(estado==2){
-			mensaje=OK+" "+secuencia+" date= "+fecha+" "+"dame los operadores";
-			longitud=mensaje.length();
-			mensaje=mensaje+" "+longitud;
+		do {
+		//Dependiendo de la variable est, estariamos en un estado u otro
+		if(estado==0){		
+			//Comprobamos que se recibe un mensaje OK
+			if(d.getComando().equals(Mensajes.OK)){
+				//Comprobamos si el usuario cumple nuestras condiciones
+				if(this.tieneNumero(d.getUsuario())==true && d.getUsuario().length()>=6){
+			this.toByteArray(d, "Selecciona operacion");
+			estado++;
+				}
+				else {
+					Datos d1 = new Datos(Mensajes.ERR,d.getUsuario(),d.getOp1(),d.getOp2(),d.getSigno(),d.getRes());
+					this.toByteArray(d1, "Usuario no valido");
+				}
+			}
+			// Si el comando recibido no es OK mandamos un mensaje de error
+			else {
+				Datos d2 = new Datos(Mensajes.ERR,d.getUsuario(),d.getOp1(),d.getOp2(),d.getSigno(),d.getRes());
+				this.toByteArray(d2,"Seleccion incorrecta");
+			}
+		} else 
+			if(estado==1){
+				//Si recibimos un OK
+				if(d.getComando()==Mensajes.OK){
+					//Si quiere realizar una suma
+					if(d.getSigno().equals("+")){
+						Servicios s = new Servicios(d.getOp1(),d.getOp2());
+						Datos dat = new Datos(d.getComando(),d.getUsuario(),d.getOp1(),d.getOp2(),d.getSigno(),s.Suma());
+						this.toByteArray(dat);
+					}
+					else 
+					//Si quiere realizar una resta
+					if(d.getSigno().equals("-")){
+						Servicios s = new Servicios(d.getOp1(),d.getOp2());
+						Datos dat = new Datos(d.getComando(),d.getUsuario(),d.getOp1(),d.getOp2(),d.getSigno(),s.Resta());
+						this.toByteArray(dat);
+					}
+					//Si el signo es incorrecto enviamos mensaje de error
+					else{
+						Datos d3 = new Datos(Mensajes.ERR,d.getUsuario(),d.getOp1(),d.getOp2(),d.getSigno(),d.getRes());
+						this.toByteArray(d3,"Signo incorrecto");					
+						}	
+				}
+				//Si recibimos un quit, salimos
+				else if (d.getComando().equals(Mensajes.QUIT)){
+					estado=2;
+				}
+				
+			}
+			else
+		if(estado==2){
+		Datos d4 = new Datos(Mensajes.QUIT,d.getUsuario(),d.getOp1(),d.getOp2(),d.getSigno(),d.getRes());
+		this.toByteArray(d4, "Has salido del servicio");
+		salida=true;	
 		}
 		
-		else if(estado==3){
-			mensaje=OK+" "+secuencia+" date= "+fecha+" "+"el resultado es"+""+d.toString();
-			longitud=mensaje.length();
-			mensaje=mensaje+" "+longitud;
-		}
-		
-		else if(estado==4){
-			mensaje=OK+" "+secuencia+" date= "+fecha+" "+"Has salido";
-			longitud=mensaje.length();
-			mensaje=mensaje+" "+longitud;
-		}
-		secuencia++;
-		
+		} while (salida=false);
 	}
 	
-	public byte[] toByteArray()
+	
+	
+	/**
+	 * @param data datos que pasamos para escribir en consola
+	 */
+	public void toByteArray(Datos data)
 	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(5);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
 		DataOutputStream dos = new DataOutputStream(bos);
 		
 		try {
-			dos.writeUTF(mensaje);
+			dos.writeUTF(data.getComando());
+			dos.writeUTF(data.getUsuario());
+			dos.writeDouble(data.getRes());
+			dos.close();
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
 	}
 	
-	
-	
-	
-	public Mensajes(String datos, byte[] bytedata){
-		ByteArrayInputStream bais = new ByteArrayInputStream(bytedata);
-
-		DataInputStream dis = new DataInputStream(bais);
+	/**
+	 * @param dat datos que pasamos para escribir en consola
+	 * @param cad cadena de caracteres que complementa a los datos
+	 */
+	public void toByteArray(Datos dat, String cad)
+	{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
+		DataOutputStream dos = new DataOutputStream(bos);
+		
 		try {
-			this.secuenciaRecibida = dis.readInt();
-			this.fecha = dis.readLong();
-			this.mensaje=dis.readUTF();
-		} catch (IOException ex) {
-		}
-
-		
-		
-		
-		String [] campos=datos.split(" ");
-		
-		if (campos.length==9){
-			codigoRecibido=campos[0];
-			secuenciaRecibida=Integer.parseInt(campos[1]);
-			fecha=Long.parseLong(campos[4]);
-			//data=new Servicios(Double.parseDouble(campos[5]),Double.parseDouble(campos[6]),campos[7], Double.parseDouble(campos[8]));
+			dos.writeUTF(dat.getComando());
+			dos.writeUTF(dat.getUsuario());
+			dos.writeUTF(cad);
+			dos.close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * @param word String que pasamo para comprobaar si contiene algun numero
+	 * @return True si contiene algun numero el String, False si no lo lleva
+	 */
+	public boolean tieneNumero(String word){
+		if(word.contains("1"))
+			return true;
+		else if (word.contains("2"))
+			return true;
+		else if (word.contains("3"))
+			return true;
+		else if (word.contains("4"))
+			return true;
+		else if (word.contains("5"))
+			return true;
+		else if(word.contains("6"))
+			return true;
+		else if	(word.contains("7"))
+			return true;
+		else if	(word.contains("8"))
+			return true;
+		else if	(word.contains("9"))
+			return true;
+		else if	(word.contains("0"))
+	return true;
+else
+	return false;
+	
+}
 
+	/**
+	 * @return devuelve el valor de la variable mensaje
+	 */
 	public String getMensaje() {
 		return mensaje;
 	}
 
+	/**
+	 * @param mensaje Asigna la cadena que le pasamos a la variable mensaje
+	 */
 	public void setMensaje(String mensaje) {
 		this.mensaje = mensaje;
 	}
+	
+	
 
 }
