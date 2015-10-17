@@ -72,11 +72,7 @@ public class Datos {
 	
 	}
 
-	public String toString()
-	{
-		return  op1+" "+op2;
-		
-	}
+	
 
 	/**
 	 * @return devuelve el valor de la variable op1
