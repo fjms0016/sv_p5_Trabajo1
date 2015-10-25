@@ -19,8 +19,7 @@ public interface Cliente {
 	 * Método para seleccionar la operacion que quiere realizar el cliente
 	 */
 	public void seleccionOperacion();
-	//public void Suma();
-	//public void Resta();
+
 	/**
 	 * Método para indicar que el cliente quiere salir
 	 */

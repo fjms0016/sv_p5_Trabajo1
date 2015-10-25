@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.Date;
 
 public class Mensajes {
-	
+	//PDU formada por: Comando+version+secuencia+usuario
 	//public static final String CRLF="\r\n";
 	public static final String OK="+OK";
 	public static final String ERR="-ERR";
@@ -13,9 +13,11 @@ public class Mensajes {
 	protected static String ID="";
 	//static int OPERACION=1;
 	//static int QUIT=2;
-	protected int longitud,estado=0;
+	protected int secuencia,estado=0;
+	protected String version="1";
 	protected long fecha;
 	private boolean salida=false;
+	
 	private String mensaje = "";
 
 	
@@ -32,19 +34,22 @@ public class Mensajes {
 			//Comprobamos que se recibe un mensaje OK
 			if(d.getComando().equals(Mensajes.OK)){
 				//Comprobamos si el usuario cumple nuestras condiciones
-				if(this.tieneNumero(d.getUsuario())==true && d.getUsuario().length()>=6){
+				if(this.tieneNumero(d.getUsuario())==true && d.getUsuario().length()>=6 && d.getUsuario().length()<=12){
 			this.toByteArray(d, "Selecciona operacion");
 			estado++;
+			secuencia++;
 				}
 				else {
 					Datos d1 = new Datos(Mensajes.ERR,d.getUsuario(),d.getOp1(),d.getOp2(),d.getSigno(),d.getRes());
 					this.toByteArray(d1, "Usuario no valido");
+					secuencia++;
 				}
 			}
 			// Si el comando recibido no es OK mandamos un mensaje de error
 			else {
 				Datos d2 = new Datos(Mensajes.ERR,d.getUsuario(),d.getOp1(),d.getOp2(),d.getSigno(),d.getRes());
 				this.toByteArray(d2,"Seleccion incorrecta");
+				secuencia++;
 			}
 		} else 
 			if(estado==1){
@@ -55,6 +60,7 @@ public class Mensajes {
 						Servicios s = new Servicios(d.getOp1(),d.getOp2());
 						Datos dat = new Datos(d.getComando(),d.getUsuario(),d.getOp1(),d.getOp2(),d.getSigno(),s.Suma());
 						this.toByteArray(dat);
+						secuencia++;
 					}
 					else 
 					//Si quiere realizar una resta
@@ -62,16 +68,19 @@ public class Mensajes {
 						Servicios s = new Servicios(d.getOp1(),d.getOp2());
 						Datos dat = new Datos(d.getComando(),d.getUsuario(),d.getOp1(),d.getOp2(),d.getSigno(),s.Resta());
 						this.toByteArray(dat);
+						secuencia++;
 					}
 					//Si el signo es incorrecto enviamos mensaje de error
 					else{
 						Datos d3 = new Datos(Mensajes.ERR,d.getUsuario(),d.getOp1(),d.getOp2(),d.getSigno(),d.getRes());
-						this.toByteArray(d3,"Signo incorrecto");					
+						this.toByteArray(d3,"Signo incorrecto");	
+						secuencia++;
 						}	
 				}
 				//Si recibimos un quit, salimos
 				else if (d.getComando().equals(Mensajes.QUIT)){
 					estado=2;
+					secuencia++;
 				}
 				
 			}
@@ -92,11 +101,13 @@ public class Mensajes {
 	 */
 	public void toByteArray(Datos data)
 	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(29);
 		DataOutputStream dos = new DataOutputStream(bos);
 		
 		try {
 			dos.writeUTF(data.getComando());
+			dos.writeUTF(version);
+			dos.write(secuencia);
 			dos.writeUTF(data.getUsuario());
 			dos.writeDouble(data.getRes());
 			dos.close();
@@ -113,11 +124,13 @@ public class Mensajes {
 	 */
 	public void toByteArray(Datos dat, String cad)
 	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(41);
 		DataOutputStream dos = new DataOutputStream(bos);
 		
 		try {
 			dos.writeUTF(dat.getComando());
+			dos.writeUTF(version);
+			dos.write(secuencia);
 			dos.writeUTF(dat.getUsuario());
 			dos.writeUTF(cad);
 			dos.close();
@@ -129,7 +142,7 @@ public class Mensajes {
 	}
 	
 	/**
-	 * @param word String que pasamo para comprobaar si contiene algun numero
+	 * @param word String que pasamos para comprobar si contiene algun numero
 	 * @return True si contiene algun numero el String, False si no lo lleva
 	 */
 	public boolean tieneNumero(String word){
