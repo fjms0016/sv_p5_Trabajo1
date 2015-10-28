@@ -9,14 +9,6 @@ public class Datos {
 
 	
 	//Constructor para inicializar los datos
-	/**
-	 * @param cmd comandos del protocolo. Puede ser OK,ERR o QUIT
-	 * @param usu cadena de caracteres con el usuario
-	 * @param ope1 primer operador del calculo
-	 * @param ope2 segundo operador del calculo
-	 * @param sig signo de la operacion
-	 * @param res resultado de la operacion
-	 */
 	public Datos(String cmd,String usu,double ope1, double ope2, String sig, double res)
 	{
 		this.op1=ope1;
@@ -29,104 +21,82 @@ public class Datos {
 		
 	
 	//Constructor para recibir los datos
-	/**
-	 * @param dis conjunto de datos que recibimos en un objeto DataInputStream
-	 */
-	public Datos (DataInputStream dis){
+	public Datos (byte[] datos) throws ExcepcionDatos{
+		
+		ByteArrayInputStream bais = new ByteArrayInputStream(datos); 
+		DataInputStream dis = new DataInputStream(bais);
+		
 		try {
-			this.op1= dis.readDouble();
-			this.op2=dis.readDouble();
 			this.comando=dis.readUTF();
+			this.op1= dis.readDouble();
 			this.signo=dis.readUTF();
+			this.op2=dis.readDouble();			
 			this.usuario=dis.readUTF();
 			this.result=dis.readDouble();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			this.op1=0.0;
-			this.op2=0.0;
-			this.comando=Mensajes.ERR;
-			this.signo=" ";
-			this.usuario=" ";
-			this.result=0.0;
-			e.printStackTrace();
+			throw new ExcepcionDatos("Formato Invalido");
 		}
 			Datos d= new Datos(comando,usuario,op1,op2,signo,result);
 			Mensajes m =new Mensajes(d);
 	}
 	
 	
-	/**
-	 * @param dos datos que mandamos en un objeto DataOutputStream
-	 */
-	public void toByteArray (DataOutputStream dos){
+	public byte[] toByteArray (Datos data){
+		
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
+		DataOutputStream dos = new DataOutputStream(bos);
+		
 		try {
 			dos.writeUTF(comando);
 			dos.writeDouble(this.op1);
 			dos.writeUTF(signo);
-			dos.writeDouble(this.op2);			
+			dos.writeDouble(this.op2);	
+			dos.writeUTF(usuario);
+			dos.writeDouble(result);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-	
+		byte[] bytes =  bos.toByteArray(); // devuelve byte[]
+		return bytes;
 	}
 
-	
+	public String toString()
+	{
+		return  op1+" "+op2;
+		
+	}
 
-	/**
-	 * @return devuelve el valor de la variable op1
-	 */
 	public double getOp1() {
 		return op1;
 	}
 
-	/**
-	 * @param op1 Asigna el valor que le pasamos a la variable op1
-	 */
 	public void setOp1(double op1) {
 		this.op1 = op1;
 	}
 
-	/**
-	 * @return devuelve el valor de la variable op1
-	 */
 	public double getOp2() {
 		return op2;
 	}
 
-	/**
-	 * @param op2 Asigna el valor que le pasamos a la variable op1
-	 */
 	public void setOp2(double op2) {
 		this.op2 = op2;
 	}
 
-	/**
-	 * @return devuelve el valor de la variable comando
-	 */
 	public String getComando() {
 		return comando;
 	}
 	
 
-	/**
-	 * @return devuelve el valor de la variable usuario
-	 */
 	public String getUsuario() {
 		return usuario;
 	}
 	
-	/**
-	 * @return devuelve el valor de la variable signo
-	 */
 	public String getSigno() {
 		return signo;
 	}
 	
-	/**
-	 * @return devuelve el valor de la variable result
-	 */
 	public double getRes() {
 		return result;
 	}

@@ -1,7 +1,9 @@
 package ejercicio1;
 
 public interface Cliente {
-
+	public byte MSG_INICIO=0x01;
+	public byte MSG_OPERACION=0x02;
+	public byte MSG_FIN=0x04;
 	
 	/**
 	 * Método para autenticar un usuario
