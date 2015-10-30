@@ -49,12 +49,7 @@ public class Servicios {
 
 
 
-	/**
-	 * @param ope1 Asigna este valor al operador 1
-	 */
-	public void setOpe1(double ope1) {
-		this.ope1 = ope1;
-	}
+	
 
 
 
@@ -67,12 +62,7 @@ public class Servicios {
 
 
 
-	/**
-	 * @param ope2 Asigna este valor al operador 2
-	 */
-	public void setOpe2(double ope2) {
-		this.ope2 = ope2;
-	}
+	
 
 
 
@@ -85,12 +75,7 @@ public class Servicios {
 
 
 
-	/**
-	 * @param res Asigna el valor dado a la variable resultado
-	 */
-	public void setRes(double res) {
-		this.res = res;
-	}
+	
 
 
 }
